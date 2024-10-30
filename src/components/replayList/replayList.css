@@ -1,0 +1,23 @@
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 3rem;
+  font-weight: bold;
+}
+
+.replay-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 0 1rem 0;
+  border-bottom: 1px solid rgb(204, 204, 204);
+}
+
+.replay-upload {
+  display: flex;
+  padding: 1rem 0 1rem 0;
+  border-bottom: 1px solid rgb(204, 204, 204);
+}
+
+.opposing-team {
+  display: flex;
+}

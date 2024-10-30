@@ -1,0 +1,25 @@
+10/27/2024 5:10:11 PM: Error downloading pokemon #10128: Response status code does not indicate success: 404 (Not Found).
+10/27/2024 5:36:34 PM: Error downloading pokemon #10128: Response status code does not indicate success: 404 (Not Found).
+10/27/2024 5:40:45 PM: Error downloading pokemon #10128: Response status code does not indicate success: 404 (Not Found).
+10/27/2024 5:43:00 PM: Sprite for Pokémon lurantis-totem (ID: 10128) is null or empty.
+10/27/2024 5:44:03 PM: Sprite for Pokémon lurantis-totem (ID: 10128) is null or empty.
+10/27/2024 5:44:03 PM: Sprite for Pokémon salazzle-totem (ID: 10129) is null or empty.
+10/27/2024 5:44:05 PM: Sprite for Pokémon kommo-o-totem (ID: 10146) is null or empty.
+10/27/2024 5:44:05 PM: Sprite for Pokémon araquanid-totem (ID: 10153) is null or empty.
+10/27/2024 5:44:06 PM: Sprite for Pokémon togedemaru-totem (ID: 10154) is null or empty.
+10/27/2024 5:44:06 PM: Sprite for Pokémon pikachu-starter (ID: 10158) is null or empty.
+10/27/2024 5:44:06 PM: Sprite for Pokémon eevee-starter (ID: 10159) is null or empty.
+10/27/2024 5:44:06 PM: Sprite for Pokémon pikachu-world-cap (ID: 10160) is null or empty.
+10/27/2024 5:44:08 PM: Sprite for Pokémon zygarde-10 (ID: 10181) is null or empty.
+10/27/2024 5:44:08 PM: Sprite for Pokémon cramorant-gulping (ID: 10182) is null or empty.
+10/27/2024 5:44:08 PM: Sprite for Pokémon cramorant-gorging (ID: 10183) is null or empty.
+10/27/2024 5:44:09 PM: Sprite for Pokémon morpeko-hangry (ID: 10187) is null or empty.
+10/27/2024 5:44:09 PM: Sprite for Pokémon zarude-dada (ID: 10192) is null or empty.
+10/27/2024 5:44:15 PM: Sprite for Pokémon koraidon-limited-build (ID: 10264) is null or empty.
+10/27/2024 5:44:15 PM: Sprite for Pokémon koraidon-sprinting-build (ID: 10265) is null or empty.
+10/27/2024 5:44:15 PM: Sprite for Pokémon koraidon-swimming-build (ID: 10266) is null or empty.
+10/27/2024 5:44:16 PM: Sprite for Pokémon koraidon-gliding-build (ID: 10267) is null or empty.
+10/27/2024 5:44:16 PM: Sprite for Pokémon miraidon-low-power-mode (ID: 10268) is null or empty.
+10/27/2024 5:44:16 PM: Sprite for Pokémon miraidon-drive-mode (ID: 10269) is null or empty.
+10/27/2024 5:44:16 PM: Sprite for Pokémon miraidon-aquatic-mode (ID: 10270) is null or empty.
+10/27/2024 5:44:16 PM: Sprite for Pokémon miraidon-glide-mode (ID: 10271) is null or empty.
