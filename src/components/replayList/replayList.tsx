@@ -1,12 +1,8 @@
 import React, { useRef, useState } from "react";
 import "./replayList.css";
-import { Pokemon } from "../../interfaces/pokemon.model";
 import { getReplayLog } from "../../services/replay.ts";
-
-interface ReplayUrlEntry {
-  url: string;
-  showButton: boolean;
-}
+import { Replay } from "../../interfaces/replay.model.ts";
+import { baseFormMapping } from "../../services/baseFormMapping.ts";
 
 interface ReplayListProps {
   showdownName: string;
@@ -14,57 +10,60 @@ interface ReplayListProps {
 }
 
 const ReplayList: React.FC<ReplayListProps> = ({ showdownName, spriteMap }) => {
-  const [replayUrls, setReplayUrls] = useState<ReplayUrlEntry[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [opponentPokemonList, setOpponentPokemonList] = useState<string[]>([]);
-  const [replayLogs, setReplayLogs] = useState<string[]>([]);
+  const [replayEntries, setReplayEntries] = useState<Replay[]>([]);
 
   const loadReplay = async () => {
     const url = inputRef.current?.value.split("?")[0];
     if (url && typeof url === "string") {
-      setReplayUrls((prevUrls) => [
-        ...prevUrls.map((entry) => ({
-          ...entry,
-          showButton: false,
-        })),
-        { url, showButton: true },
-      ]);
-      if (inputRef.current) inputRef.current.value = "";
-
       const replayLog = await getReplayLog(url);
-      setReplayLogs((prevLogs) => [...prevLogs, replayLog]);
-      parseOpponentPokemon(replayLog, showdownName);
+      const opponentTeam = parseOpponentPokemon(replayLog, showdownName);
 
+      const newReplayEntry: Replay = {
+        url,
+        opponentTeam,
+        replayLog,
+      };
+
+      setReplayEntries((prevEntries) => [...prevEntries, newReplayEntry]);
+
+      if (inputRef.current) inputRef.current.value = "";
       console.log(`Added replay: ${url}`);
     } else {
       console.error("invalid url input");
     }
   };
 
-  const parseOpponentPokemon = (replayLog: string, showdownName: string) => {
+  const parseOpponentPokemon = (
+    replayLog: string,
+    showdownName: string
+  ): string[] => {
     const log = replayLog.split("\n");
-    let playerOne = log[0].split("|j|")[0].slice(1).trim();
-    let playerTwo = log[1].split("|j|")[0].slice(1).trim();
+    let playerOne = log[0]
+      .split("|j|")
+      .filter((part) => part !== "")[0]
+      .slice(1)
+      .trim();
     const isPlayerOne: boolean = playerOne === showdownName ? true : false;
     const opponentPokemonString: string = isPlayerOne
       ? "|poke|p2|"
       : "|poke|p1|";
 
+    const opponentPokemon: string[] = [];
     for (let i = 0; i < log.length; i++) {
       let count = 0;
       if (count >= 6) break;
       if (log[i].includes(opponentPokemonString)) {
         const lineArray = log[i].split("|")[3];
-        const pokemon = lineArray.split(",")[0];
-        setOpponentPokemonList((prevOpponentPokemonList) => [
-          ...prevOpponentPokemonList,
-          pokemon,
-        ]);
+        let pokemonName = lineArray.split(",")[0];
+        pokemonName = baseFormMapping[pokemonName] || pokemonName;
+        opponentPokemon.push(pokemonName);
         count++;
       }
     }
 
-    console.log(opponentPokemonList);
+    console.log(opponentPokemon);
+    return opponentPokemon;
   };
 
   const getSpritePath = (pokemonName: string): string => {
@@ -79,11 +78,12 @@ const ReplayList: React.FC<ReplayListProps> = ({ showdownName, spriteMap }) => {
         <div className="opposing-team-header">Opposing Team</div>
         <div>Notes</div>
       </div>
-      {replayUrls.map((entry, index) => (
+
+      {replayEntries.map((entry, index) => (
         <div key={index} className="replay-entry">
           <div className="game-links">{entry.url}</div>
           <div className="opposing-team">
-            {opponentPokemonList.map((pokemon, index) => (
+            {entry.opponentTeam.map((pokemon, index) => (
               <div key={index}>
                 <img src={getSpritePath(pokemon)} alt={pokemon} />
               </div>
@@ -92,6 +92,7 @@ const ReplayList: React.FC<ReplayListProps> = ({ showdownName, spriteMap }) => {
           <input type="text" placeholder="Notes" />
         </div>
       ))}
+
       <div className="replay-upload">
         <input
           type="text"
