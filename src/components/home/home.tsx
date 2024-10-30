@@ -5,12 +5,19 @@ import { loadSpriteMap } from "../../services/spriteMap.ts";
 import { getPokepaste } from "../../services/pokepaste.ts";
 import ReplayList from "../replayList/replayList.tsx";
 import "./home.css";
+import ReplayHeader from "../replayHeader/replayHeader.tsx";
+import MatchupStats from "../matchupStats/matchupStats.tsx";
+import MoveUsage from "../moveUsage/moveUsage.tsx";
+import UsageStats from "../usageStats/usageStats.tsx";
+import { Replay } from "../../interfaces/replay.model.ts";
 
 const Home: React.FC = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [teamName, setTeamName] = useState<string>("");
   const [spriteMap, setSpriteMap] = useState<{ [name: string]: string }>({});
   const [showdownName, setShowdownName] = useState<string>("");
+  const [view, setView] = useState<string>("replayList");
+  const [replayEntries, setReplayEntries] = useState<Replay[]>([]);
 
   useEffect(() => {
     // Load sprite map on mount
@@ -57,6 +64,10 @@ const Home: React.FC = () => {
     return filename ? `/sprites/${filename}` : "/sprites/default.png";
   };
 
+  const updateReplayEntries = (entries: Replay[]) => {
+    setReplayEntries(entries);
+  };
+
   return (
     <div>
       <div>
@@ -89,7 +100,19 @@ const Home: React.FC = () => {
           </div>
         ))}
       </div>
-      {pokemonList.length > 0 && <ReplayList showdownName={showdownName} spriteMap={spriteMap} />}
+      {pokemonList.length > 0 && <ReplayHeader setView={setView} />}
+      {view === "replayList" && pokemonList.length > 0 && (
+        <ReplayList
+          showdownName={showdownName}
+          spriteMap={spriteMap}
+          updateReplayEntries={updateReplayEntries}
+        />
+      )}
+      {view === "matchupStats" && (
+        <MatchupStats replayEntries={replayEntries} />
+      )}
+      {view === "moveUsage" && <MoveUsage replayEntries={replayEntries} />}
+      {view === "usageStats" && <UsageStats replayEntries={replayEntries} />}
     </div>
   );
 };

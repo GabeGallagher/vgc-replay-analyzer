@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./replayList.css";
 import { getReplayLog } from "../../services/replay.ts";
 import { Replay } from "../../interfaces/replay.model.ts";
@@ -7,22 +7,33 @@ import { baseFormMapping } from "../../services/baseFormMapping.ts";
 interface ReplayListProps {
   showdownName: string;
   spriteMap: { [name: string]: string };
+  updateReplayEntries: (entries: Replay[]) => void;
 }
 
-const ReplayList: React.FC<ReplayListProps> = ({ showdownName, spriteMap }) => {
+const ReplayList: React.FC<ReplayListProps> = ({
+  showdownName,
+  spriteMap,
+  updateReplayEntries,
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [replayEntries, setReplayEntries] = useState<Replay[]>([]);
+
+  useEffect(() => {
+    updateReplayEntries(replayEntries);
+  }, [replayEntries, updateReplayEntries]);
 
   const loadReplay = async () => {
     const url = inputRef.current?.value.split("?")[0];
     if (url && typeof url === "string") {
       const replayLog = await getReplayLog(url);
       const opponentTeam = parseOpponentPokemon(replayLog, showdownName);
+      const win = parseWinner(replayLog, showdownName);
 
       const newReplayEntry: Replay = {
         url,
         opponentTeam,
         replayLog,
+        win,
       };
 
       setReplayEntries((prevEntries) => [...prevEntries, newReplayEntry]);
@@ -66,6 +77,18 @@ const ReplayList: React.FC<ReplayListProps> = ({ showdownName, spriteMap }) => {
     return opponentPokemon;
   };
 
+  const parseWinner = (replayLog: string, showdownName: string): boolean => {
+    const log = replayLog.split("\n");
+    for (let i = 0; i < log.length; i++) {
+      if (log[i].includes("|win|")) {
+        const winner = log[i].split("|win|").filter((part) => part !== "")[0];
+        if (winner === showdownName) return true;
+        return false;
+      }
+    }
+    return false;
+  };
+
   const getSpritePath = (pokemonName: string): string => {
     const filename = spriteMap[pokemonName.toLowerCase()];
     return filename ? `/sprites/${filename}` : "/sprites/default.png";
@@ -74,14 +97,16 @@ const ReplayList: React.FC<ReplayListProps> = ({ showdownName, spriteMap }) => {
   return (
     <div className="replay-entries-container">
       <div className="header-container">
-        <div className="game-links-header">Game Links</div>
+        <div className="result-header">Result</div>
+        <div className="replay-links-header">Replay Links</div>
         <div className="opposing-team-header">Opposing Team</div>
         <div>Notes</div>
       </div>
 
       {replayEntries.map((entry, index) => (
         <div key={index} className="replay-entry">
-          <div className="game-links">{entry.url}</div>
+          <div className="result">{entry.win === true ? "W" : "L"}</div>
+          <div className="replay-links">{entry.url}</div>
           <div className="opposing-team">
             {entry.opponentTeam.map((pokemon, index) => (
               <div key={index}>
