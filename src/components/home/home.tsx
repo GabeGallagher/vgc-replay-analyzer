@@ -20,7 +20,6 @@ const Home: React.FC = () => {
   const [replayEntries, setReplayEntries] = useState<Replay[]>([]);
 
   useEffect(() => {
-    // Load sprite map on mount
     loadSpriteMap().then(setSpriteMap);
   }, []);
 
@@ -106,6 +105,7 @@ const Home: React.FC = () => {
           showdownName={showdownName}
           spriteMap={spriteMap}
           updateReplayEntries={updateReplayEntries}
+          replayEntries={replayEntries}
         />
       )}
       {view === "matchupStats" && (

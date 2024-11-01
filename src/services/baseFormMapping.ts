@@ -4,5 +4,9 @@ export const baseFormMapping: { [key: string]: string } = {
   "Sawsbuck-Summer": "Sawsbuck",
   "Sawsbuck-Autumn": "Sawsbuck",
   "Sawsbuck-Winter": "Sawsbuck",
+  "Mimikyu": "mimikyu-disguised",
+  "Maushold-Four": "maushold-family-of-four",
+  "Maushold-Three": "maushold-family-of-three",
+  "Tatsugiri": "tatsugiri-curly",
   // Add other cosmetic forms here as needed
 };

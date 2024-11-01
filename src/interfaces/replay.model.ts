@@ -1,6 +1,10 @@
 export interface Replay {
   url: string;
-  opponentTeam: string[];
   replayLog: string;
-  win: boolean;
+  opponentTeam: string[];
+  lead: [string, string];
+  used: string[];
+  opponentLead: [string, string];
+  opponentUsed: string[];
+  win?: boolean;
 }
