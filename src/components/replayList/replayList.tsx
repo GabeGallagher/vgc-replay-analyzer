@@ -18,7 +18,6 @@ const ReplayList: React.FC<ReplayListProps> = ({
   replayEntries,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  let win: boolean = false;
 
   useEffect(() => {
     updateReplayEntries(replayEntries);
@@ -37,10 +36,9 @@ const ReplayList: React.FC<ReplayListProps> = ({
         used: [],
         opponentLead: ["", ""],
         opponentUsed: [],
+        win: false,
       };
-
       parseReplayLog(replayLog, showdownName, newReplayEntry);
-      win = parseWinner(replayLog, showdownName);
 
       updateReplayEntries([...replayEntries, newReplayEntry]);
 
@@ -104,6 +102,9 @@ const ReplayList: React.FC<ReplayListProps> = ({
             (!isPlayerOne && player === "p1")
           )
             replay.opponentTerastallize = `${pokemonName}|${tera}`;
+        } else if (line.substring(0, 4) === "|win|") {
+          let winner = line.split("|")[2];
+          if (winner === showdownName) replay.win = true;
         }
         rightIndex++;
         leftIndex = rightIndex;
@@ -138,18 +139,6 @@ const ReplayList: React.FC<ReplayListProps> = ({
     return playerName === showdownName ? true : false;
   };
 
-  const parseWinner = (replayLog: string, showdownName: string): boolean => {
-    const log = replayLog.split("\n");
-    for (let i = 0; i < log.length; i++) {
-      if (log[i].includes("|win|")) {
-        const winner = log[i].split("|win|").filter((part) => part !== "")[0];
-        if (winner === showdownName) return true;
-        return false;
-      }
-    }
-    return false;
-  };
-
   const getSpritePath = (pokemonName: string): string => {
     const filename = spriteMap[pokemonName.toLowerCase()];
     return filename ? `/sprites/${filename}` : "/sprites/default.png";
@@ -164,12 +153,12 @@ const ReplayList: React.FC<ReplayListProps> = ({
         <div>Notes</div>
       </div>
 
-      {replayEntries.map((entry, index) => (
+      {replayEntries.map((replay, index) => (
         <div key={index} className="replay-entry">
-          <div className="result">{entry.win === true ? "W" : "L"}</div>
-          <div className="replay-links">{entry.url}</div>
+          <div className="result">{replay.win === true ? "W" : "L"}</div>
+          <div className="replay-links">{replay.url}</div>
           <div className="opposing-team">
-            {entry.opponentTeam.map((pokemon, index) => (
+            {replay.opponentTeam.map((pokemon, index) => (
               <div key={index}>
                 <img src={getSpritePath(pokemon)} alt={pokemon} />
               </div>

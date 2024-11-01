@@ -8,5 +8,5 @@ export interface Replay {
   opponentLead: [string, string];
   opponentUsed: string[];
   opponentTerastallize?: string;
-  win?: boolean;
+  win: boolean;
 }
