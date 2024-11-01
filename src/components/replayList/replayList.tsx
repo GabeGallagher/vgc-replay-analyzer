@@ -87,6 +87,23 @@ const ReplayList: React.FC<ReplayListProps> = ({
             setLeads(line, false, replay, leadCount, "|switch|p2");
           }
           if (leadCount[0] === 4) isGettingLeads = false;
+        } else if (line.substring(0, 14) === "|-terastallize") {
+          let lineArray = line.split("|");
+          let pokemon: string = lineArray[2];
+          let player = pokemon.split(":")[0].substring(0, 2);
+          let pokemonName = pokemon.split(":")[1].trim();
+          let tera: string = lineArray[3];
+
+          if (
+            (isPlayerOne && player === "p1") ||
+            (!isPlayerOne && player === "p2")
+          )
+            replay.terastallize = `${pokemonName}|${tera}`;
+          else if (
+            (isPlayerOne && player === "p2") ||
+            (!isPlayerOne && player === "p1")
+          )
+            replay.opponentTerastallize = `${pokemonName}|${tera}`;
         }
         rightIndex++;
         leftIndex = rightIndex;
