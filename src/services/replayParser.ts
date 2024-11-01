@@ -26,9 +26,11 @@ export const parseReplayLog = (
         pokemonName = baseFormMapping[pokemonName] || pokemonName;
         replay.opponentTeam.push(pokemonName);
       } else if (line === "|start") isGettingLeads = true;
-      else if (isGettingLeads && line.substring(0, 8) === "|switch|") {
-        setLeads(isPlayerOne, line, replay, leadCount);
-        if (leadCount[0] === 4) isGettingLeads = false;
+      else if (line.substring(0, 8) === "|switch|") {
+        if (isGettingLeads) {
+          setLeads(isPlayerOne, line, replay, leadCount);
+          if (leadCount[0] === 4) isGettingLeads = false;
+        } else setUsed(isPlayerOne, line, replay);
       } else if (line.substring(0, 14) === "|-terastallize") {
         setTerastal(line, isPlayerOne, replay);
       } else if (line.substring(0, 5) === "|win|") {
@@ -80,6 +82,24 @@ const appendLeadArray = (
     replay.used.push(pokemonName);
   }
   leadCount[0] = leadCount[0] + 1;
+};
+
+const setUsed = (isPlayerOne: boolean, moveString: string, replay: Replay) => {
+  const moveStringArray: string[] = moveString.split("|");
+  const switchString: string = moveStringArray[2].slice(0, 2);
+  const pokemonName: string = moveStringArray[3].split(",")[0];
+
+  if (
+    (isPlayerOne && switchString === "p1") ||
+    (!isPlayerOne && switchString === "p2")
+  ) {
+    replay.used.push(pokemonName);
+  } else if (
+    (isPlayerOne && switchString === "p2") ||
+    (!isPlayerOne && switchString === "p1")
+  ) {
+    replay.opponentUsed.push(pokemonName);
+  }
 };
 
 const setTerastal = (line: string, isPlayerOne: boolean, replay: Replay) => {

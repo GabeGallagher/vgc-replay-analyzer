@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "./replayList.css";
 import { getReplayLog } from "../../services/replay.ts";
 import { Replay } from "../../interfaces/replay.model.ts";
