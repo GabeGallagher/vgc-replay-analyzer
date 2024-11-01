@@ -68,15 +68,10 @@ const ReplayList: React.FC<ReplayListProps> = ({
       let checkChar = `${replayLog[rightIndex]}`;
       if (checkChar === "\n") {
         let line = replayLog.slice(leftIndex, rightIndex);
-        if (
-          line.substring(0, 3) === "|j|" &&
-          opponentPlayerString === ""
-        ) {
+        if (line.substring(0, 3) === "|j|" && opponentPlayerString === "") {
           isPlayerOne = checkPlayerOne(line.slice(4), showdownName);
           opponentPlayerString = isPlayerOne ? "|poke|p2|" : "|poke|p1|";
-        } else if (
-          line.substring(0, 9) === opponentPlayerString
-        ) {
+        } else if (line.substring(0, 9) === opponentPlayerString) {
           let pokemonName: string = line.split("|")[3].split(",")[0].trim();
           pokemonName = baseFormMapping[pokemonName] || pokemonName;
           replay.opponentTeam.push(pokemonName);
@@ -100,13 +95,24 @@ const ReplayList: React.FC<ReplayListProps> = ({
     console.log(replay);
   };
 
-  const setLeads = (line: string, evalOpponent: boolean, replay: Replay, leadCount: number[], lead: string) => {
-      let pokemonName: string = line.split("|")[3].split(",")[0].trim();
-      let indexMod: number = lead === "|switch|p1" ? 0 : 2;
-      if (evalOpponent)replay.opponentLead[leadCount[0] - indexMod] = pokemonName;
-      else replay.lead[leadCount[0] - indexMod] = pokemonName;
-      leadCount[0] = leadCount[0] + 1;
-  }
+  const setLeads = (
+    line: string,
+    evalOpponent: boolean,
+    replay: Replay,
+    leadCount: number[],
+    lead: string
+  ) => {
+    let pokemonName: string = line.split("|")[3].split(",")[0].trim();
+    let indexMod: number = lead === "|switch|p1" ? 0 : 2;
+    if (evalOpponent) {
+      replay.opponentLead[leadCount[0] - indexMod] = pokemonName;
+      replay.opponentUsed.push(pokemonName);
+    } else {
+      replay.lead[leadCount[0] - indexMod] = pokemonName;
+      replay.used.push(pokemonName);
+    }
+    leadCount[0] = leadCount[0] + 1;
+  };
 
   const checkPlayerOne = (
     playerName: string,
