@@ -102,7 +102,7 @@ const ReplayList: React.FC<ReplayListProps> = ({
             (!isPlayerOne && player === "p1")
           )
             replay.opponentTerastallize = `${pokemonName}|${tera}`;
-        } else if (line.substring(0, 4) === "|win|") {
+        } else if (line.substring(0, 5) === "|win|") {
           let winner = line.split("|")[2];
           if (winner === showdownName) replay.win = true;
         }
