@@ -22,7 +22,17 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
         usageMap = loadUsageStats(replayEntries, team);
         setView("usageStats");
         break;
+
+      case "matchupStats":
+        setView("matchupStats");
+        break;
+
+      case "moveUsage":
+        setView("moveUsage");
+        break;
+
       default:
+        console.error(`Invalid view: ${view}`);
         break;
     }
   };
