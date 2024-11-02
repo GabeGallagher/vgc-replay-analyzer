@@ -99,8 +99,14 @@ const Home: React.FC = () => {
           </div>
         ))}
       </div>
-      {pokemonList.length > 0 && <ReplayHeader setView={setView} />}
-      {view === "replayList" && pokemonList.length > 0 && (
+      {pokemonList.length > 0 && (
+        <ReplayHeader
+          team={pokemonList}
+          spriteMap={spriteMap}
+          showdownName={showdownName}
+        />
+      )}
+      {/* {view === "replayList" && pokemonList.length > 0 && (
         <ReplayList
           showdownName={showdownName}
           spriteMap={spriteMap}
@@ -112,7 +118,9 @@ const Home: React.FC = () => {
         <MatchupStats replayEntries={replayEntries} />
       )}
       {view === "moveUsage" && <MoveUsage replayEntries={replayEntries} />}
-      {view === "usageStats" && <UsageStats replayEntries={replayEntries} />}
+      {view === "usageStats" && (
+        <UsageStats replayEntries={replayEntries} team={pokemonList} />
+      )} */}
     </div>
   );
 };
