@@ -1,0 +1,32 @@
+.moves-container-parent {
+  display: flex;
+  flex-wrap: wrap; /* Allows items to wrap to the next row */
+  gap: 1rem; /* Optional: spacing between items */
+}
+
+.pokemon-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 1rem;
+}
+
+.moves-container-header {
+  flex: 1 1 calc(33.333% - 1rem); /* Each child takes 1/3 of the width minus spacing */
+  box-sizing: border-box;
+}
+
+.move {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 80%;
+    margin-left: 2rem;
+}
+
+.move-name {
+    flex: 0.25rem 1;
+}
+
+.move-count, .move-percent {
+    margin-left: 4rem;
+}
