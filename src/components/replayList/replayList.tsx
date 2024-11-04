@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./replayList.css";
 import { getReplayLog } from "../../services/replay.ts";
 import { Replay } from "../../interfaces/replay.model.ts";
-import { parseReplayLog } from "../../services/replayParser.ts";
+import { getReplayId, parseReplayLog } from "../../services/replayParser.ts";
 
 interface ReplayListProps {
   showdownName: string;
@@ -18,10 +18,26 @@ const ReplayList: React.FC<ReplayListProps> = ({
   replayEntries,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    updateReplayEntries(replayEntries);
-  }, [replayEntries, updateReplayEntries]);
+    if (!isLoaded) {
+      const storedReplays: Replay[] = JSON.parse(
+        localStorage.getItem("replays") || "[]"
+      );
+      const newReplaysFromStorage: Replay[] = [];
+      for (const replay of storedReplays) {
+        const exists = replayEntries.some(
+          (existingReplay) =>
+            getReplayId(existingReplay.url) === getReplayId(replay.url)
+        );
+        if (!exists) newReplaysFromStorage.push(replay);
+      }
+      updateReplayEntries([...replayEntries, ...newReplaysFromStorage]);
+      setIsLoaded(true);
+      console.log(replayEntries);
+    }
+  }, [isLoaded, showdownName, spriteMap, updateReplayEntries, replayEntries]);
 
   const loadReplay = async () => {
     const url = inputRef.current?.value.split("?")[0];
@@ -42,8 +58,12 @@ const ReplayList: React.FC<ReplayListProps> = ({
 
       updateReplayEntries([...replayEntries, newReplayEntry]);
 
+      const storedReplays = [...replayEntries, newReplayEntry];
+      localStorage.setItem("replays", JSON.stringify(storedReplays));
+
       if (inputRef.current) inputRef.current.value = "";
       console.log(`Added replay: ${url}`);
+      console.log(replayEntries);
     } else {
       console.error("invalid url input");
     }

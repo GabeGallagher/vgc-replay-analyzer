@@ -38,12 +38,16 @@ export const loadUsageStats = (
 
     let teraName = "";
     if (terastallize) {
-      teraName = baseNameMapping[terastallize.split("|")[0]] || terastallize;
+      teraName =
+        baseNameMapping[terastallize.split("|")[0]] ||
+        terastallize.split("|")[0];
     }
-    const pokemonUsage = pokemonMap.get(teraName)!;
-    pokemonUsage.tera![0]++;
-    if (win) {
-      pokemonUsage.tera![1]++;
+    if (teraName !== "") {
+      const pokemonUsage = pokemonMap.get(teraName)!;
+      pokemonUsage.tera![0]++;
+      if (win) {
+        pokemonUsage.tera![1]++;
+      }
     }
   });
   return pokemonMap;

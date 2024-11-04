@@ -117,3 +117,8 @@ const setTerastal = (line: string, isPlayerOne: boolean, replay: Replay) => {
   )
     replay.opponentTerastallize = `${pokemonName}|${tera}`;
 };
+
+export const getReplayId = (url: string): string => {
+  const urlParts = url.split("/");
+  return urlParts[3].split("?")[0];
+}

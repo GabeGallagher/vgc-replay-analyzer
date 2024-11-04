@@ -10,7 +10,7 @@ import { Replay } from "../../interfaces/replay.model.ts";
 const ReplayHeader = ({ team, spriteMap, showdownName }) => {
   const [view, setView] = useState<string>("replayList");
   const [replayEntries, setReplayEntries] = useState<Replay[]>([]);
-  let usageMap = new Map();
+  const [usageMap, updateUsageMap] = useState<Map<string, any>>(new Map());
 
   const handleViewChange = (view: string) => {
     switch (view) {
@@ -19,7 +19,8 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
         break;
 
       case "usageStats":
-        usageMap = loadUsageStats(replayEntries, team);
+        updateUsageMap(loadUsageStats(replayEntries, team));
+        console.log(usageMap);
         setView("usageStats");
         break;
 
@@ -66,6 +67,7 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
           replayEntries={replayEntries}
           team={team}
           usageMap={usageMap}
+          spriteMap={spriteMap}
         />
       )}
     </div>

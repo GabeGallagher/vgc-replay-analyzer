@@ -1,0 +1,8 @@
+.usage-stats-container {
+  /* display: flex; */
+}
+
+.pokemon-usage-stats-container {
+  display: flex;
+  justify-content: space-around;
+}
