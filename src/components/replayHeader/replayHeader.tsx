@@ -11,6 +11,7 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
   const [view, setView] = useState<string>("replayList");
   const [replayEntries, setReplayEntries] = useState<Replay[]>([]);
   const [usageMap, updateUsageMap] = useState<Map<string, any>>(new Map());
+  const [moveMap, setMoveMap] = useState<Map<string, Map<string, number>>>(new Map());
 
   const handleViewChange = (view: string) => {
     switch (view) {
@@ -42,6 +43,10 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
     setReplayEntries(entries);
   };
 
+  const updateMoveMap = (moveMap: Map<string, Map<string, number>>) => {
+    setMoveMap(moveMap);
+  };
+
   return (
     <div>
       <div className="replay-header-container">
@@ -56,12 +61,12 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
           spriteMap={spriteMap}
           updateReplayEntries={updateReplayEntries}
           replayEntries={replayEntries}
+          moveMap={moveMap}
+          updateMoveMap={updateMoveMap}
         />
       )}
-      {view === "matchupStats" && (
-        <MatchupStats replayEntries={replayEntries} />
-      )}
-      {view === "moveUsage" && <MoveUsage replayEntries={replayEntries} />}
+      {view === "matchupStats" && <MatchupStats replayEntries={replayEntries} />}
+      {view === "moveUsage" && <MoveUsage replayEntries={replayEntries} moveMap={moveMap} />}
       {view === "usageStats" && (
         <UsageStats
           replayEntries={replayEntries}

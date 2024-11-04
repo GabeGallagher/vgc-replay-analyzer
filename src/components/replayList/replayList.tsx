@@ -9,6 +9,8 @@ interface ReplayListProps {
   spriteMap: { [name: string]: string };
   updateReplayEntries: (entries: Replay[]) => void;
   replayEntries: Replay[];
+  moveMap: Map<string, Map<string, number>>;
+  updateMoveMap: (moveMap: Map<string, Map<string, number>>) => void;
 }
 
 const ReplayList: React.FC<ReplayListProps> = ({
@@ -16,6 +18,8 @@ const ReplayList: React.FC<ReplayListProps> = ({
   spriteMap,
   updateReplayEntries,
   replayEntries,
+  moveMap,
+  updateMoveMap,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -54,9 +58,10 @@ const ReplayList: React.FC<ReplayListProps> = ({
         opponentUsed: [],
         win: false,
       };
-      parseReplayLog(replayLog, showdownName, newReplayEntry);
+      const newMoveMap = parseReplayLog(replayLog, showdownName, newReplayEntry, moveMap);
 
       updateReplayEntries([...replayEntries, newReplayEntry]);
+      if (newMoveMap) updateMoveMap(newMoveMap);
 
       const storedReplays = [...replayEntries, newReplayEntry];
       localStorage.setItem("replays", JSON.stringify(storedReplays));

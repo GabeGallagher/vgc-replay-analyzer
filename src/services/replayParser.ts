@@ -1,10 +1,12 @@
 import { Replay } from "../interfaces/replay.model";
 import { baseFormMapping } from "./baseFormMapping.ts";
+import { baseNameMapping } from "./baseNameMapping.ts";
 
 export const parseReplayLog = (
   replayLog: string,
   showdownName: string,
-  replay: Replay
+  replay: Replay,
+  moveMap: Map<string, Map<string, number>>
 ) => {
   let leftIndex: number = 0;
   let rightIndex: number = 0;
@@ -33,6 +35,8 @@ export const parseReplayLog = (
         } else setUsed(isPlayerOne, line, replay);
       } else if (line.substring(0, 14) === "|-terastallize") {
         setTerastal(line, isPlayerOne, replay);
+      } else if (line.substring(0, 6) === "|move|") {
+        moveMap = recordMove(line, isPlayerOne, replay, moveMap);
       } else if (line.substring(0, 5) === "|win|") {
         let winner = line.split("|")[2];
         if (winner === showdownName) replay.win = true;
@@ -40,6 +44,7 @@ export const parseReplayLog = (
       rightIndex++;
       leftIndex = rightIndex;
     }
+    return moveMap;
   }
   console.log(replay);
 };
@@ -48,12 +53,7 @@ const checkPlayerOne = (playerName: string, showdownName: string): boolean => {
   return playerName === showdownName ? true : false;
 };
 
-const setLeads = (
-  isPlayerOne: boolean,
-  line: string,
-  replay: Replay,
-  leadCount: number[]
-) => {
+const setLeads = (isPlayerOne: boolean, line: string, replay: Replay, leadCount: number[]) => {
   if (isPlayerOne && line.substring(0, 10) === "|switch|p1") {
     appendLeadArray(line, false, replay, leadCount, "|switch|p1");
   } else if (!isPlayerOne && line.substring(0, 10) === "|switch|p1") {
@@ -89,15 +89,9 @@ const setUsed = (isPlayerOne: boolean, moveString: string, replay: Replay) => {
   const switchString: string = moveStringArray[2].slice(0, 2);
   const pokemonName: string = moveStringArray[3].split(",")[0];
 
-  if (
-    (isPlayerOne && switchString === "p1") ||
-    (!isPlayerOne && switchString === "p2")
-  ) {
+  if ((isPlayerOne && switchString === "p1") || (!isPlayerOne && switchString === "p2")) {
     replay.used.push(pokemonName);
-  } else if (
-    (isPlayerOne && switchString === "p2") ||
-    (!isPlayerOne && switchString === "p1")
-  ) {
+  } else if ((isPlayerOne && switchString === "p2") || (!isPlayerOne && switchString === "p1")) {
     replay.opponentUsed.push(pokemonName);
   }
 };
@@ -111,14 +105,42 @@ const setTerastal = (line: string, isPlayerOne: boolean, replay: Replay) => {
 
   if ((isPlayerOne && player === "p1") || (!isPlayerOne && player === "p2"))
     replay.terastallize = `${pokemonName}|${tera}`;
-  else if (
-    (isPlayerOne && player === "p2") ||
-    (!isPlayerOne && player === "p1")
-  )
+  else if ((isPlayerOne && player === "p2") || (!isPlayerOne && player === "p1"))
     replay.opponentTerastallize = `${pokemonName}|${tera}`;
+};
+
+const recordMove = (
+  line: string,
+  isPlayerOne: boolean,
+  replay: Replay,
+  moveMap: Map<string, Map<string, number>>
+): Map<string, Map<string, number>> => {
+  const moveLine: string[] = line.split("|");
+  const player: string = moveLine[2].substring(0, 2);
+
+  if ((isPlayerOne && player === "p1") || (!isPlayerOne && player === "p2")) {
+    const unmappedName: string = moveLine[2].split(":")[1].trim();
+    const pokemonName: string = baseNameMapping[unmappedName] || unmappedName;
+    if (moveMap.has(pokemonName)) {
+      const move: string = moveLine[3];
+      const pokemonMoveUsedMap: Map<string, number> = moveMap.get(pokemonName)!;
+      if (pokemonMoveUsedMap.has(move)) {
+        const moveUse: number = pokemonMoveUsedMap.get(move)! + 1;
+        pokemonMoveUsedMap.set(move, moveUse);
+      } else {
+        pokemonMoveUsedMap.set(move, 1);
+      }
+    } else {
+      const move: string = moveLine[3];
+      const pokemonMoveUsedMap: Map<string, number> = new Map();
+      pokemonMoveUsedMap.set(move, 1);
+      moveMap.set(pokemonName, pokemonMoveUsedMap);
+    }
+  }
+  return moveMap;
 };
 
 export const getReplayId = (url: string): string => {
   const urlParts = url.split("/");
   return urlParts[3].split("?")[0];
-}
+};
