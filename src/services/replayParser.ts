@@ -44,9 +44,9 @@ export const parseReplayLog = (
       rightIndex++;
       leftIndex = rightIndex;
     }
-    return moveMap;
   }
   console.log(replay);
+  return moveMap;
 };
 
 const checkPlayerOne = (playerName: string, showdownName: string): boolean => {

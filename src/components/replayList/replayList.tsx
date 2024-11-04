@@ -61,7 +61,13 @@ const ReplayList: React.FC<ReplayListProps> = ({
       const newMoveMap = parseReplayLog(replayLog, showdownName, newReplayEntry, moveMap);
 
       updateReplayEntries([...replayEntries, newReplayEntry]);
-      if (newMoveMap) updateMoveMap(newMoveMap);
+      if (newMoveMap) {
+        updateMoveMap(newMoveMap);
+        const moveMapObject = Object.fromEntries(
+          [...newMoveMap.entries()].map(([key, value]) => [key, Object.fromEntries(value)])
+        )
+        localStorage.setItem("moveMap", JSON.stringify(moveMapObject));
+      }
 
       const storedReplays = [...replayEntries, newReplayEntry];
       localStorage.setItem("replays", JSON.stringify(storedReplays));

@@ -21,7 +21,6 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
 
       case "usageStats":
         updateUsageMap(loadUsageStats(replayEntries, team));
-        console.log(usageMap);
         setView("usageStats");
         break;
 
@@ -30,6 +29,17 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
         break;
 
       case "moveUsage":
+        const moveMapData = localStorage.getItem("moveMap");
+        if (moveMapData) {
+          const parsedObject = JSON.parse(moveMapData);
+          const parsedMap: Map<string, Map<string, number>> = new Map(
+            Object.entries(parsedObject).map(([key, value]) => [
+              key,
+              new Map(Object.entries(value as { [key: string]: number })),
+            ])
+          );
+          setMoveMap(parsedMap);
+        }
         setView("moveUsage");
         break;
 
@@ -66,14 +76,9 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
         />
       )}
       {view === "matchupStats" && <MatchupStats replayEntries={replayEntries} />}
-      {view === "moveUsage" && <MoveUsage replayEntries={replayEntries} moveMap={moveMap} />}
+      {view === "moveUsage" && <MoveUsage moveMap={moveMap} />}
       {view === "usageStats" && (
-        <UsageStats
-          replayEntries={replayEntries}
-          team={team}
-          usageMap={usageMap}
-          spriteMap={spriteMap}
-        />
+        <UsageStats replayEntries={replayEntries} usageMap={usageMap} spriteMap={spriteMap} />
       )}
     </div>
   );

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import "./usageStats.css";
 import { LeadNode } from "../../interfaces/leadNode";
 
-const UsageStats = ({ replayEntries, team, usageMap, spriteMap }) => {
+const UsageStats = ({ replayEntries, usageMap, spriteMap }) => {
   const [mostCommonLeadTree, updateCommonLeadTree] = useState<LeadNode>({});
   const [mostSuccessfulLeadTree, updateSuccessfulLeadTree] = useState<LeadNode>({});
   const [commonLeadArray, updateCommonLeadArray] = useState<[string, number][]>([]);
