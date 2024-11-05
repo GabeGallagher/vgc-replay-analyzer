@@ -75,7 +75,9 @@ const ReplayHeader = ({ team, spriteMap, showdownName }) => {
           updateMoveMap={updateMoveMap}
         />
       )}
-      {view === "matchupStats" && <MatchupStats replayEntries={replayEntries} />}
+      {view === "matchupStats" && (
+        <MatchupStats replayEntries={replayEntries} usageMap={usageMap} spriteMap={spriteMap} />
+      )}
       {view === "moveUsage" && <MoveUsage moveMap={moveMap} />}
       {view === "usageStats" && (
         <UsageStats replayEntries={replayEntries} usageMap={usageMap} spriteMap={spriteMap} />

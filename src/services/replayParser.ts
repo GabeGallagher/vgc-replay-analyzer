@@ -90,9 +90,9 @@ const setUsed = (isPlayerOne: boolean, moveString: string, replay: Replay) => {
   const pokemonName: string = moveStringArray[3].split(",")[0];
 
   if ((isPlayerOne && switchString === "p1") || (!isPlayerOne && switchString === "p2")) {
-    replay.used.push(pokemonName);
+    if (!replay.used.includes(pokemonName)) replay.used.push(pokemonName);
   } else if ((isPlayerOne && switchString === "p2") || (!isPlayerOne && switchString === "p1")) {
-    replay.opponentUsed.push(pokemonName);
+    if (!replay.opponentUsed.includes(pokemonName)) replay.opponentUsed.push(pokemonName);
   }
 };
 
