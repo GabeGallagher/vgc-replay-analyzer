@@ -1,10 +1,19 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
+import "./matchupStats.css";
 import { Replay } from "../../interfaces/replay.model";
+import { loadPokedex } from "../../services/pokedex.ts";
 
 const MatchupStats = ({ replayEntries, usageMap, spriteMap }) => {
-  // Map is <pokemonName, [numberOfGames, numberOfOpponentWins]
-  //   const pokemonMap: Map<string, [number, number]> = new Map<string, [number, number]>();
+  // opponentPokemonMap is <pokemonName, [numberOfGames, numberOfOpponentWins]
   const [opponentPokemonMap, updatePokemonMap] = useState<Map<string, [number, number]>>(new Map());
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredPokemon, setFilteredPokemon] = useState<string[]>([]);
+  const [selectedPokemon, setSelectedPokemon] = useState<string | null>(null);
+  const [pokemonList, setPokemonList] = useState<string[]>([]);
+  const [showAbove, setShowAbove] = useState(false);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const getSpritePath = (pokemonName: string): string => {
     const filename = spriteMap[pokemonName.toLowerCase()];
@@ -33,6 +42,34 @@ const MatchupStats = ({ replayEntries, usageMap, spriteMap }) => {
   useEffect(() => {
     loadMatchupStats();
   }, [replayEntries]);
+
+  useEffect(() => {
+    loadPokedex().then(setPokemonList);
+  }, []);
+
+  useEffect(() => {
+    const filtered = pokemonList.filter((pokemonName) => {
+      pokemonName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    setFilteredPokemon(filtered);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    if (inputRef.current && dropdownRef.current) {
+      const inputRect = inputRef.current.getBoundingClientRect();
+      const dropdownRect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - inputRect.bottom;
+      const spaceAbove = inputRect.top;
+
+      setShowAbove(spaceBelow < dropdownRect.height && spaceAbove > spaceBelow);
+    }
+  }, [searchTerm, filteredPokemon]);
+
+  const handlePokemonSelect = (pokemonName: string) => {
+    setSelectedPokemon(pokemonName);
+    setSearchTerm("");
+    setFilteredPokemon([]);
+  };
 
   /* Builds a list of up to 6 pokemon against whom player has the most wins. List is sorted from
   most wins against to least wins, as long as the pokemon was seen at least 3 times. List not
@@ -160,19 +197,53 @@ const MatchupStats = ({ replayEntries, usageMap, spriteMap }) => {
         <h2>Best Matchups</h2>
         <div className="matchup-stats">{buildBestMatchups}</div>
       </div>
+
       <div>
         <h2>Worst Matchups</h2>
         <div className="matchup-stats">{buildWorstMatchups}</div>
       </div>
+
       <div>
         <h2>Highest Attendence</h2>
         <div className="matchup-stats">{buildHighestAttendence}</div>
       </div>
+
       <div>
         <h2>Lowest Attendence</h2>
         <div className="matchup-stats">{buildLowestAttendence}</div>
       </div>
-      <div>Matchup Selection</div>
+
+      <div>
+        <h2>Matchup Selection</h2>
+        <div className="dropdown-container">
+          <input
+            type="text"
+            placeholder="Search Pokemon"
+            ref={inputRef}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          {searchTerm && (
+            <div ref={dropdownRef} className={`dropdown-list ${showAbove ? "above" : "below"}`}>
+              {filteredPokemon.map((pokemon, index) => (
+                <div
+                  key={index}
+                  className="dropdown-item"
+                  onClick={() => handlePokemonSelect(pokemon)}
+                >
+                  {pokemon}
+                </div>
+              ))}
+            </div>
+          )}
+          {selectedPokemon && (
+            <div className="pokemon-sprite">
+              <img src={getSpritePath(selectedPokemon)} alt={selectedPokemon} />
+              <p>{selectedPokemon}</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

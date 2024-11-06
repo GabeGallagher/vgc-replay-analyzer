@@ -1,0 +1,42 @@
+.matchup-stats-container {
+  width: 100%;
+}
+
+.dropdown-container {
+  position: relative;
+  width: 200px;
+}
+
+.dropdown-list {
+  position: absolute;
+  left: 0;
+  right: 0;
+  max-height: 200px; /* Controls the dropdown's height */
+  overflow-y: auto; /* Enables scrolling */
+  border: 1px solid #ddd;
+  background: white;
+  z-index: 1000;
+}
+
+.dropdown-list.below {
+    top: 100%;
+    margin-top: 0.25rem;
+}
+
+.dropdown-list.above {
+    top: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.dropdown-item {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background-color: #f0f0f0;
+}
+
+.pokemon-sprite {
+  margin-top: 10px;
+}
